@@ -5,6 +5,17 @@ pub enum Trace<T> {
     Err(String)
 }
 
+impl<T> Trace<T> {
+    pub fn unwrap(self) -> T {
+        match self {
+            Trace::Ok(v) => v,
+            Trace::Err(string) => {
+                panic!("Panicked on a Trace unwrap value with error: {}", string)
+            },
+        }
+    }
+}
+
 pub mod macros {
     #[macro_export]
     macro_rules! start_trace {
