@@ -6,6 +6,8 @@ use super::params::Fetch;
 use super::scheduler::Scheduler;
 use super::handle::Handle;
 use super::params::System;
+use super::ptr::Ptr;
+use super::ecs::Ecs;
 
 pub struct Systems {
     startup: Vec<Scheduler>,   
@@ -68,8 +70,24 @@ impl Systems {
         self.systems[*H::handle() as usize].add_system::<S>();
     }
 
-    pub fn execute_startup(&self) {
+    pub fn execute_startup(&mut self, ecs: Ptr<Ecs>) {
+        for startup in self.startup.iter_mut() {
+            startup.finalize(ecs.clone());
+        }
 
+        for startup in self.startup.iter() {
+            startup.execute(ecs.clone());
+        }
+
+        for system in self.systems.iter_mut() {
+            system.finalize(ecs.clone());
+        }
+    }
+
+    pub fn execute_systems(&self, ecs: Ptr<Ecs>) {
+        for system in self.systems.iter() {
+            system.execute(ecs.clone());
+        }
     }
 }
 

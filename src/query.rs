@@ -18,10 +18,31 @@ use super::package::PackageIndex;
 use super::archetypes::Archetype;
 use super::handle::Handle;
 use super::trace;
+use super::params::Fetch;
 
 pub struct Query<Q: IntoQuery> {
     ecs: Ptr<Ecs>,
     marker: PhantomData<Q>,
+}
+
+impl<Q: IntoQuery> Default for Query<Q> {
+    fn default() -> Self {
+        Self { ecs: Ptr::null(), marker: Default::default() }
+    }
+}
+
+impl<Q: IntoQuery> Fetch for Query<Q> {
+    fn fetch(ecs: Ptr<Ecs>) -> Trace<Self> {
+        Trace::Ok(Self {
+            ecs: ecs.clone(),
+            marker: PhantomData,
+        })
+    }
+
+    fn access(v: &mut Vec<Accessor>, ecs: Ptr<Ecs>) -> Trace<()> {
+        Q::accessors(v, ecs);
+        Trace::Ok(())
+    }
 }
 
 pub trait IntoQuery: 'static {

@@ -16,7 +16,7 @@ pub trait System: Default {
 
 pub trait Fetch: Default {
     fn fetch(ecs: Ptr<Ecs>) -> Trace<Self>;
-    fn access(v: &mut Vec<Accessor>) -> Trace<()>;
+    fn access(v: &mut Vec<Accessor>, ecs: Ptr<Ecs>) -> Trace<()>;
 }
 
 pub struct ResRef<R>(pub(crate) *const R);
@@ -40,7 +40,7 @@ impl<R: Resource> Fetch for ResRef<R> {
         ecs.get_resource_ref::<R>()
     }
 
-    fn access(v: &mut Vec<Accessor>) -> Trace<()> {
+    fn access(v: &mut Vec<Accessor>, ecs: Ptr<Ecs>) -> Trace<()> {
         if *R::handle() == u16::MAX {
             start_trace!(format!("Tried to collect accessor for resource {}, but it had not been declared!", type_name::<R>()))
         }
@@ -78,7 +78,7 @@ impl<R: Resource> Fetch for ResMut<R> {
         ecs.get_resource_mut::<R>()
     }
 
-    fn access(v: &mut Vec<Accessor>) -> Trace<()> {
+    fn access(v: &mut Vec<Accessor>, ecs: Ptr<Ecs>) -> Trace<()> {
         if *R::handle() == u16::MAX {
             start_trace!(format!("Tried to collect accessor for resource {}, but it had not been declared!", type_name::<R>()))
         }
@@ -97,8 +97,8 @@ where
         Trace::Ok((trace!(P1::fetch(ecs)),))
     }
 
-    fn access(v: &mut Vec<Accessor>) -> Trace<()> {
-        P1::access(v)
+    fn access(v: &mut Vec<Accessor>, ecs: Ptr<Ecs>) -> Trace<()> {
+        P1::access(v, ecs)
     }
 }
 
@@ -114,9 +114,9 @@ where
         ))
     }
 
-    fn access(v: &mut Vec<Accessor>) -> Trace<()> {
-        trace!(P1::access(v));
-        trace!(P2::access(v));
+    fn access(v: &mut Vec<Accessor>, ecs: Ptr<Ecs>) -> Trace<()> {
+        trace!(P1::access(v, ecs.clone()));
+        trace!(P2::access(v, ecs.clone()));
 
         Trace::Ok(())
     }
@@ -136,10 +136,10 @@ where
         ))
     }
 
-    fn access(v: &mut Vec<Accessor>) -> Trace<()> {
-        trace!(P1::access(v));
-        trace!(P2::access(v));
-        trace!(P3::access(v));
+    fn access(v: &mut Vec<Accessor>, ecs: Ptr<Ecs>) -> Trace<()> {
+        trace!(P1::access(v, ecs.clone()));
+        trace!(P2::access(v, ecs.clone()));
+        trace!(P3::access(v, ecs.clone()));
 
         Trace::Ok(())
     }
@@ -161,11 +161,11 @@ where
         ))
     }
 
-    fn access(v: &mut Vec<Accessor>) -> Trace<()> {
-        trace!(P1::access(v));
-        trace!(P2::access(v));
-        trace!(P3::access(v));
-        trace!(P4::access(v));
+    fn access(v: &mut Vec<Accessor>, ecs: Ptr<Ecs>) -> Trace<()> {
+        trace!(P1::access(v, ecs.clone()));
+        trace!(P2::access(v, ecs.clone()));
+        trace!(P3::access(v, ecs.clone()));
+        trace!(P4::access(v, ecs.clone()));
 
         Trace::Ok(())
     }
@@ -189,12 +189,12 @@ where
         ))
     }
 
-    fn access(v: &mut Vec<Accessor>) -> Trace<()> {
-        trace!(P1::access(v));
-        trace!(P2::access(v));
-        trace!(P3::access(v));
-        trace!(P4::access(v));
-        trace!(P5::access(v));
+    fn access(v: &mut Vec<Accessor>, ecs: Ptr<Ecs>) -> Trace<()> {
+        trace!(P1::access(v, ecs.clone()));
+        trace!(P2::access(v, ecs.clone()));
+        trace!(P3::access(v, ecs.clone()));
+        trace!(P4::access(v, ecs.clone()));
+        trace!(P5::access(v, ecs.clone()));
 
         Trace::Ok(())
     }
@@ -220,13 +220,13 @@ where
         ))
     }
 
-    fn access(v: &mut Vec<Accessor>) -> Trace<()> {
-        trace!(P1::access(v));
-        trace!(P2::access(v));
-        trace!(P3::access(v));
-        trace!(P4::access(v));
-        trace!(P5::access(v));
-        trace!(P6::access(v));
+    fn access(v: &mut Vec<Accessor>, ecs: Ptr<Ecs>) -> Trace<()> {
+        trace!(P1::access(v, ecs.clone()));
+        trace!(P2::access(v, ecs.clone()));
+        trace!(P3::access(v, ecs.clone()));
+        trace!(P4::access(v, ecs.clone()));
+        trace!(P5::access(v, ecs.clone()));
+        trace!(P6::access(v, ecs.clone()));
 
         Trace::Ok(())
     }

@@ -9,6 +9,7 @@ use super::systems::Systems;
 use super::archetypes::Archetypes;
 use super::handle::Handle;
 use super::handle::Component;
+use super::ptr::Ptr;
 
 pub struct Ecs {
     pub(crate) archetypes: Archetypes,
@@ -17,6 +18,13 @@ pub struct Ecs {
 }
 
 impl Ecs {
+    pub fn execute_startup(&mut self) {
+        self.systems.execute_startup(Ptr::new(self));
+    }
+
+    pub fn execute_systems(&self) {
+        self.systems.execute_systems(Ptr::new(self));
+    }
 
     pub fn new() -> Self {
         Self {

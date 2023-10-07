@@ -29,7 +29,7 @@ impl Scheduler {
         self.temp.push(
             Node {
                 execute: |ecs| { S::execute(trace!(S::fetch(ecs))) },
-                access: |accessors| { S::access(accessors) },
+                access: |accessors, ecs| { S::access(accessors, ecs) },
                 accessors: Vec::new(),
                 edges: Vec::new(),
                 name: type_name::<S>(),
@@ -37,10 +37,10 @@ impl Scheduler {
         );
     }
 
-    pub fn finalize(&mut self) {
+    pub fn finalize(&mut self, ecs: Ptr<Ecs>) {
         // Compute Queries & Accessors for Each System
         for node in self.temp.iter_mut() {
-            if let Trace::Err(e) = (node.access)(&mut node.accessors) {
+            if let Trace::Err(e) = (node.access)(&mut node.accessors, ecs.clone()) {
                 panic!("System Scheduler for stage {} encountered error in system {} with trace: \n {}", self.stage, node.name, e);
             }
         }
@@ -133,7 +133,7 @@ struct Group {
 
 struct Node {
     execute: fn(Ptr<Ecs>) -> Trace<()>,
-    access: fn(&mut Vec<Accessor>) -> Trace<()> ,
+    access: fn(&mut Vec<Accessor>, ecs: Ptr<Ecs>) -> Trace<()> ,
     accessors: Vec<Accessor>,
     edges: Vec<usize>,
     name: &'static str,

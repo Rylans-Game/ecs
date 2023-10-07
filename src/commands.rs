@@ -159,7 +159,7 @@ impl Fetch for Commands {
         Trace::Ok(Commands::new(ecs))
     }
 
-    fn access(_: &mut Vec<Accessor>) -> Trace<()> {
+    fn access(_: &mut Vec<Accessor>, ecs: Ptr<Ecs>) -> Trace<()> {
         Trace::Ok(())
         // we dont access anything un-safely. 
     }
