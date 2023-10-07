@@ -1,4 +1,6 @@
 
+use std::sync::Arc;
+
 use super::resources::Resources;
 use super::params::{System, Fetch, ResMut, ResRef};
 use super::handle::Resource;
@@ -15,6 +17,15 @@ pub struct Ecs {
 }
 
 impl Ecs {
+
+    pub fn new() -> Self {
+        Self {
+            archetypes: Archetypes::new(),
+            resources: Resources::new(),
+            systems: Systems::new(),
+        }
+    }
+
     pub fn get_resource_mut<R: Resource>(&self) -> Trace<ResMut<R>> {
         self.resources.get_resource_mut::<R>()
     }
